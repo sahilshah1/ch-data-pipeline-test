@@ -21,5 +21,6 @@ hs_err_pid*
 gradle/
 gradlew
 gradlew.bat
+build/
 
 **/.DS_Store
