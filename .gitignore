@@ -14,3 +14,12 @@ hs_err_pid*
 #intelliJ project config
 *.iml
 *.ipr
+.idea/
+
+#gradle
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+
+**/.DS_Store
