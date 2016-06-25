@@ -98,6 +98,10 @@ public class SpecParser {
         public DataRow(final List<DataColumnValue> dataColumnValues) {
             this.dataColumnValues = dataColumnValues;
         }
+
+        public List<DataColumnValue> getDataColumnValues() {
+            return this.dataColumnValues;
+        }
     }
 
 
@@ -106,10 +110,27 @@ public class SpecParser {
         private final DataType dataType;
         private final String value;
 
-        private DataColumnValue(final String columnName, final DataType dataType, final String value) {
+        public DataColumnValue(final String columnName, final DataType dataType, final String value) {
             this.columnName = columnName;
             this.dataType = dataType;
             this.value = value;
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            if (!(other instanceof DataColumnValue)){
+                return false;
+            }
+
+            final DataColumnValue o = (DataColumnValue) other;
+            return this.columnName.equals(o.columnName) &&
+                    this.dataType == o.dataType &&
+                    this.value.equals(o.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(this.columnName, this.dataType, this.value);
         }
     }
 
