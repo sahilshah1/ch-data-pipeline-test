@@ -2,8 +2,8 @@
 Miniature example of a data pipeline according to [problem spec](file_parser.md).
 
 ## Required dependencies
-Java JDK: 1.8.0_45 or later
-MySql: 5.6.25 or later
+* Java JDK: 1.8.0_45 or later
+* MySql: 5.6.25 or later
 
 All other dependencies will be downloaded from Maven Central when building the project.
 
