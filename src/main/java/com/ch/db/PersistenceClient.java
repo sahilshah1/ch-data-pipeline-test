@@ -1,6 +1,7 @@
 package com.ch.db;
 
-import com.ch.parser.SpecParser;
+import com.ch.parser.DataRowColumnValue;
+import com.ch.parser.SpecColumnDescriptor;
 
 import java.util.List;
 
@@ -9,10 +10,10 @@ import java.util.List;
  */
 public interface PersistenceClient {
 
-    void createTable(String tableName, List<SpecParser.SpecColumnDescriptor> columnDescriptors)
+    void createTable(String tableName, List<SpecColumnDescriptor> columnDescriptors)
             throws PersistenceException;
 
-    void insertRecord(String tableName, List<SpecParser.DataColumnValue> dataColumnValues)
+    void insertRecord(String tableName, List<DataRowColumnValue> dataRowColumnValues)
             throws PersistenceException;
 
     class PersistenceException

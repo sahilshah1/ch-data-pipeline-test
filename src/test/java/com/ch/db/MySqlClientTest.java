@@ -1,6 +1,8 @@
 package com.ch.db;
 
-import com.ch.parser.SpecParser;
+import com.ch.parser.DataRowColumnValue;
+import com.ch.parser.DataType;
+import com.ch.parser.SpecColumnDescriptor;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -16,17 +18,17 @@ public class MySqlClientTest {
     @Test
     public void testMySqlInit()
             throws PersistenceClient.PersistenceException {
-        final PersistenceClient client = new MySqlClient("SOME_DB", "some_table");
+        final PersistenceClient client = new MySqlClient("SOME_DB");
     }
 
     @Test
     public void testMySqlCreateTable()
             throws PersistenceClient.PersistenceException {
-        final PersistenceClient client = new MySqlClient("SOME_DB", "some_table");
-        final List<SpecParser.SpecColumnDescriptor> descriptors = Arrays.asList(
-                new SpecParser.SpecColumnDescriptor("name", 10, SpecParser.DataType.TEXT),
-                new SpecParser.SpecColumnDescriptor("valid", 1, SpecParser.DataType.BOOLEAN),
-                new SpecParser.SpecColumnDescriptor("count", 3, SpecParser.DataType.INTEGER)
+        final PersistenceClient client = new MySqlClient("SOME_DB");
+        final List<SpecColumnDescriptor> descriptors = Arrays.asList(
+                new SpecColumnDescriptor("name", 10, DataType.TEXT),
+                new SpecColumnDescriptor("valid", 1, DataType.BOOLEAN),
+                new SpecColumnDescriptor("count", 3, DataType.INTEGER)
         );
 
         client.createTable("testTable", descriptors);
@@ -35,11 +37,11 @@ public class MySqlClientTest {
     @Test
     public void testInsertRecord()
             throws PersistenceClient.PersistenceException {
-        final PersistenceClient client = new MySqlClient("SOME_DB", "some_table");
-        final List<SpecParser.DataColumnValue> values = Arrays.asList(
-                new SpecParser.DataColumnValue("name", SpecParser.DataType.TEXT, "Sahil"),
-                new SpecParser.DataColumnValue("valid", SpecParser.DataType.BOOLEAN, "True"),
-                new SpecParser.DataColumnValue("count", SpecParser.DataType.INTEGER, "5")
+        final PersistenceClient client = new MySqlClient("SOME_DB");
+        final List<DataRowColumnValue> values = Arrays.asList(
+                new DataRowColumnValue("name", DataType.TEXT, "Sahil"),
+                new DataRowColumnValue("valid", DataType.BOOLEAN, "1"),
+                new DataRowColumnValue("count", DataType.INTEGER, "5")
         );
 
         client.insertRecord("testTable", values);

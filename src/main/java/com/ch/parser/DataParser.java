@@ -13,20 +13,20 @@ import java.util.*;
 public class DataParser {
 
     private final Path dataFilePath;
-    private final SpecParser.DataRowParser dataRowParser;
+    private final DataRowParser dataRowParser;
 
-    public DataParser(final Path dataFilePath, final SpecParser.DataRowParser dataRowParser) {
+    DataParser(final Path dataFilePath, final DataRowParser dataRowParser) {
         this.dataFilePath = dataFilePath;
         this.dataRowParser = dataRowParser;
     }
 
-    public List<SpecParser.DataRow> read() {
-        final List<SpecParser.DataRow> rows = new LinkedList<>();
+    List<DataRow> read() {
+        final List<DataRow> rows = new LinkedList<>();
 
         try (final BufferedReader br = new BufferedReader(new FileReader(this.dataFilePath.toAbsolutePath().toString()))) {
             String line;
             while ((line = br.readLine()) != null) {
-                rows.add(this.dataRowParser.parseCsv(line));
+                rows.add(new DataRow(this.dataRowParser.parseRow(line)));
             }
         }
         catch (final IOException e) {

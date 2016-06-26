@@ -1,6 +1,7 @@
 package com.ch.db;
 
-import com.ch.parser.SpecParser;
+import com.ch.parser.DataRowColumnValue;
+import com.ch.parser.SpecColumnDescriptor;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,12 +35,12 @@ public class MySqlClient
     }
 
     @Override
-    public void createTable(final String tableName, final List<SpecParser.SpecColumnDescriptor> columnDescriptors)
+    public void createTable(final String tableName, final List<SpecColumnDescriptor> columnDescriptors)
             throws PersistenceException {
         final StringBuilder query = new StringBuilder();
         query.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" ");
         query.append("(");
-        for (final SpecParser.SpecColumnDescriptor columnDescriptor : columnDescriptors) {
+        for (final SpecColumnDescriptor columnDescriptor : columnDescriptors) {
             query.append(columnDescriptor.getColumnName()).append(" ");
             //TODO: USE OOP, change BOOLEAN TO BOOLEAN slql AND TEXT to TEXT sql
             switch (columnDescriptor.getDataType()) {
@@ -70,21 +71,21 @@ public class MySqlClient
     }
 
     @Override
-    public void insertRecord(final String tableName, final List<SpecParser.DataColumnValue> dataColumnValues)
+    public void insertRecord(final String tableName, final List<DataRowColumnValue> dataRowColumnValues)
             throws PersistenceException {
         final StringBuilder query = new StringBuilder();
         query.append("INSERT INTO ").append(tableName).append(" (");
 
-        final String columnNames = dataColumnValues.stream()
-                .map(SpecParser.DataColumnValue::getColumnName)
+        final String columnNames = dataRowColumnValues.stream()
+                .map(DataRowColumnValue::getColumnName)
                 .reduce((a,b) -> a + "," + b)
                 .get();
         query.append(columnNames).append(") ");
 
         query.append("VALUES (");
 
-        final String values = dataColumnValues.stream()
-                .map(SpecParser.DataColumnValue::getValue)
+        final String values = dataRowColumnValues.stream()
+                .map(DataRowColumnValue::getValue)
                 .reduce((a,b) -> a + "," + b)
                 .get();
         query.append(values).append(") ");

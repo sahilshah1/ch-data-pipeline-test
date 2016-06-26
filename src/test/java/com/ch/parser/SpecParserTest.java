@@ -16,13 +16,12 @@ public class SpecParserTest {
     public void testBasicFormat() {
         final SpecParser parser = new SpecParser(Paths.get(SpecParserTest.class.getResource("format1.txt").getPath()));
 
-        final SpecParser.DataRowParser dataRowParser = parser.read();
-        final List<SpecParser.SpecColumnDescriptor> descriptorList = dataRowParser.getSpecColumnDescriptors();
+        final List<SpecColumnDescriptor> descriptorList = parser.read();
 
         assertEquals(3, descriptorList.size());
-        assertEquals(new SpecParser.SpecColumnDescriptor("name", 10, SpecParser.DataType.TEXT), descriptorList.get(0));
-        assertEquals(new SpecParser.SpecColumnDescriptor("valid", 1, SpecParser.DataType.BOOLEAN), descriptorList.get(1));
-        assertEquals(new SpecParser.SpecColumnDescriptor("count", 3, SpecParser.DataType.INTEGER), descriptorList.get(2));
+        assertEquals(new SpecColumnDescriptor("name", 10, DataType.TEXT), descriptorList.get(0));
+        assertEquals(new SpecColumnDescriptor("valid", 1, DataType.BOOLEAN), descriptorList.get(1));
+        assertEquals(new SpecColumnDescriptor("count", 3, DataType.INTEGER), descriptorList.get(2));
     }
 
 }
