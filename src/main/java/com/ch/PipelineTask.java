@@ -66,6 +66,11 @@ public class PipelineTask
                     batch.clear();
                 }
             });
+
+            //write any leftover rows  
+            if (batch.size() > 0) {
+                this.threadPool.submit(new PersistenceWriter(batch));
+            }
         }
 
         this.threadPool.shutdown();
