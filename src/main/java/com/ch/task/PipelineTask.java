@@ -1,4 +1,4 @@
-package com.ch;
+package com.ch.task;
 
 import com.ch.input.DataFile;
 import com.ch.input.SpecFile;
@@ -32,52 +32,67 @@ public class PipelineTask
     private final SpecFile specFile;
     private final Set<DataFile> dataFiles;
     private final PersistenceClient client;
-    private final ExecutorService threadPool;
+    private final ExecutorService dataFileTaskPool;
+    private final ExecutorService writePool;
 
     public PipelineTask(final SpecFile specFile,
                         final Set<DataFile> dataFiles,
                         final PersistenceClient client,
-                        final ExecutorService threadPool) {
+                        final ExecutorService dataFileTaskPool,
+                        final ExecutorService writePool) {
         this.specFile = specFile;
         this.dataFiles = dataFiles;
         this.client = client;
-        this.threadPool = threadPool;
+        this.dataFileTaskPool = dataFileTaskPool;
+        this.writePool = writePool;
     }
 
 
     @Override
     public Void call()
             throws PersistenceClient.PersistenceException {
-
         //read the spec to figure out how to structure the table, then create the table
         final List<SpecColumnDescriptor> columnDescriptors = new SpecParser(this.specFile.getPath()).read();
         this.client.createTable(this.specFile.getSpecName(), columnDescriptors);
 
         //loop through each of the data files for this spec and add them to db
-        for (final DataFile dataFile : this.dataFiles) {
-            final DataParser dataParser = new DataParser(dataFile.getPath(), columnDescriptors);
+        //TODO: have these parsing tasks consume files from a queue so file drops can be handled
+        this.dataFiles.forEach(dataFile -> {
+            LOGGER.info("Spawning data parsing task for " + dataFile);
+            //TODO: actually have this spawn tasks. the main process can't exit until
+            //the threadpool is shut down, but then the writePool can't be shutdown
+            //because it is not known whether all the write tasks have been submitted
+            newDataFileTask(dataFile, columnDescriptors).run();
+        });
 
-            //avoid reading all rows into memory, and do writes in a separate thread
-            //to avoid blocking
-            final List<DataRow> batch = new LinkedList<>();
-            dataParser.read(dataRow -> {
-                batch.add(dataRow);
-
-                if (batch.size() >= BATCH_SIZE) {
-                    final List<DataRow> submissionBatch = Collections.unmodifiableList(new ArrayList<>(batch));
-                    this.threadPool.submit(newPersistenceWriter(submissionBatch));
-                    batch.clear();
-                }
-            });
-
-            //write any leftover rows
-            if (batch.size() > 0) {
-                this.threadPool.submit(newPersistenceWriter(batch));
-            }
-        }
-
-        this.threadPool.shutdown();
+        this.dataFileTaskPool.shutdown();
+        this.writePool.shutdown();
         return null;
+    }
+
+    private Runnable newDataFileTask(final DataFile dataFile,
+                                     final List<SpecColumnDescriptor> columnDescriptors) {
+        return () -> {
+                final DataParser dataParser = new DataParser(dataFile.getPath(), columnDescriptors);
+
+                //avoid reading all rows into memory, and do writes in a separate thread
+                //to avoid blocking
+                final List<DataRow> batch = new LinkedList<>();
+                dataParser.read(dataRow -> {
+                    batch.add(dataRow);
+
+                    if (batch.size() >= BATCH_SIZE) {
+                        final List<DataRow> submissionBatch = Collections.unmodifiableList(new ArrayList<>(batch));
+                        this.writePool.submit(newPersistenceWriter(submissionBatch));
+                        batch.clear();
+                    }
+                });
+
+                //write any leftover rows
+                if (batch.size() > 0) {
+                    this.writePool.submit(newPersistenceWriter(batch));
+                }
+            };
     }
 
     private Runnable newPersistenceWriter(final List<DataRow> batch) {

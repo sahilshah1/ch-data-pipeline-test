@@ -4,6 +4,7 @@ import com.ch.input.DataFile;
 import com.ch.input.SpecFile;
 import com.ch.persistence.MySqlClient;
 import com.ch.persistence.PersistenceClient;
+import com.ch.task.PipelineTask;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,7 @@ public class Pipeline {
 
         final ExecutorService pipelineTaskThreadPool = Executors.newCachedThreadPool();
         final ExecutorService writeThreadPool = Executors.newCachedThreadPool();
+        final ExecutorService dataFileTaskThreadPool = Executors.newCachedThreadPool();
 
         //spawn workers
         final List<PipelineTask> tasks = new LinkedList<>();
@@ -60,6 +62,7 @@ public class Pipeline {
             tasks.add(new PipelineTask(specFile,
                     dataFileMap.get(specFile.getSpecName()),
                     MySqlClient.newClient(targetDatabaseName),
+                    dataFileTaskThreadPool,
                     writeThreadPool));
         }
         pipelineTaskThreadPool.invokeAll(tasks); //blocks until all tasks finished

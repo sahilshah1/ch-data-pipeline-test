@@ -47,6 +47,11 @@ public class DataFile {
         return this.path.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return this.path.toAbsolutePath().toString();
+    }
+
     /**
      * Visits a directory to search for data files in the format
      * specname_YYYY-MM-DD.txt
