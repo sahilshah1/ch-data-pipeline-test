@@ -19,9 +19,9 @@ public class SpecParserTest {
         final List<SpecColumnDescriptor> descriptorList = parser.read();
 
         assertEquals(3, descriptorList.size());
-        assertEquals(new SpecColumnDescriptor("name", 10, DataType.TEXT), descriptorList.get(0));
-        assertEquals(new SpecColumnDescriptor("valid", 1, DataType.BOOLEAN), descriptorList.get(1));
-        assertEquals(new SpecColumnDescriptor("count", 3, DataType.INTEGER), descriptorList.get(2));
+        assertEquals(new SpecColumnDescriptor("name", 10, SpecDataType.TEXT), descriptorList.get(0));
+        assertEquals(new SpecColumnDescriptor("valid", 1, SpecDataType.BOOLEAN), descriptorList.get(1));
+        assertEquals(new SpecColumnDescriptor("count", 3, SpecDataType.INTEGER), descriptorList.get(2));
     }
 
 }

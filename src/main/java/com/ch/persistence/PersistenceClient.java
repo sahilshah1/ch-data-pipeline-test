@@ -1,5 +1,6 @@
-package com.ch.db;
+package com.ch.persistence;
 
+import com.ch.parser.DataRow;
 import com.ch.parser.DataRowColumnValue;
 import com.ch.parser.SpecColumnDescriptor;
 
@@ -13,7 +14,7 @@ public interface PersistenceClient {
     void createTable(String tableName, List<SpecColumnDescriptor> columnDescriptors)
             throws PersistenceException;
 
-    void insertRecord(String tableName, List<DataRowColumnValue> dataRowColumnValues)
+    void insertRecord(String tableName, DataRow dataRow)
             throws PersistenceException;
 
     class PersistenceException

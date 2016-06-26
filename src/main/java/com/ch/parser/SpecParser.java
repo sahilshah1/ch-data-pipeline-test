@@ -32,6 +32,7 @@ public class SpecParser {
                 //first line contains description of columns
                 if (firstLine == null) {
                     firstLine = line;
+                    //TODO: make this not hardcoded
                     final String[] values = firstLine.split(",");
                     for(int i = 0; i < values.length; i++) {
                         if (values[i].matches("\"column name\"")) {
@@ -51,7 +52,7 @@ public class SpecParser {
                     descriptors.add(new SpecColumnDescriptor(
                             values[columnNameIndex],
                             Integer.valueOf(values[columnWidthIndex]),
-                            DataType.valueOf(values[columnDataTypeIndex])));
+                            SpecDataType.valueOf(values[columnDataTypeIndex])));
                 }
 
 

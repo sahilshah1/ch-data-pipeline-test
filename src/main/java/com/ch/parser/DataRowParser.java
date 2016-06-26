@@ -14,12 +14,12 @@ public class DataRowParser {
         this.specColumnDescriptors = specColumnDescriptors;
     }
 
-    List<DataRowColumnValue> parseRow(final String csv) {
+    public List<DataRowColumnValue> parseRow(final String rowString) {
         final List<DataRowColumnValue> values = new ArrayList<>(this.specColumnDescriptors.size());
 
         int cursor = 0;
         for (final SpecColumnDescriptor descriptor : this.specColumnDescriptors) {
-            final String columnVal = csv.substring(cursor, cursor + descriptor.getWidth());
+            final String columnVal = rowString.substring(cursor, cursor + descriptor.getWidth());
             values.add(new DataRowColumnValue(descriptor.getColumnName(), descriptor.getDataType(), columnVal.trim()));
             cursor += descriptor.getWidth();
         }

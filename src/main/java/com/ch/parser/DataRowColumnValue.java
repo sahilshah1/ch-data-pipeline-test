@@ -11,10 +11,10 @@ import java.util.Objects;
  */
 public class DataRowColumnValue {
     private final String columnName;
-    private final DataType dataType;
+    private final SpecDataType dataType;
     private final String value;
 
-    public DataRowColumnValue(final String columnName, final DataType dataType, final String value) {
+    public DataRowColumnValue(final String columnName, final SpecDataType dataType, final String value) {
         this.columnName = columnName;
         this.dataType = dataType;
         this.value = value;

@@ -1,7 +1,8 @@
-package com.ch.db;
+package com.ch.persistence;
 
+import com.ch.parser.DataRow;
 import com.ch.parser.DataRowColumnValue;
-import com.ch.parser.DataType;
+import com.ch.parser.SpecDataType;
 import com.ch.parser.SpecColumnDescriptor;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,17 +19,17 @@ public class MySqlClientTest {
     @Test
     public void testMySqlInit()
             throws PersistenceClient.PersistenceException {
-        final PersistenceClient client = new MySqlClient("SOME_DB");
+        final PersistenceClient client = MySqlClient.newClient("SOME_DB");
     }
 
     @Test
     public void testMySqlCreateTable()
             throws PersistenceClient.PersistenceException {
-        final PersistenceClient client = new MySqlClient("SOME_DB");
+        final PersistenceClient client = MySqlClient.newClient("SOME_DB");
         final List<SpecColumnDescriptor> descriptors = Arrays.asList(
-                new SpecColumnDescriptor("name", 10, DataType.TEXT),
-                new SpecColumnDescriptor("valid", 1, DataType.BOOLEAN),
-                new SpecColumnDescriptor("count", 3, DataType.INTEGER)
+                new SpecColumnDescriptor("name", 10, SpecDataType.TEXT),
+                new SpecColumnDescriptor("valid", 1, SpecDataType.BOOLEAN),
+                new SpecColumnDescriptor("count", 3, SpecDataType.INTEGER)
         );
 
         client.createTable("testTable", descriptors);
@@ -37,13 +38,13 @@ public class MySqlClientTest {
     @Test
     public void testInsertRecord()
             throws PersistenceClient.PersistenceException {
-        final PersistenceClient client = new MySqlClient("SOME_DB");
+        final PersistenceClient client = MySqlClient.newClient("SOME_DB");
         final List<DataRowColumnValue> values = Arrays.asList(
-                new DataRowColumnValue("name", DataType.TEXT, "Sahil"),
-                new DataRowColumnValue("valid", DataType.BOOLEAN, "1"),
-                new DataRowColumnValue("count", DataType.INTEGER, "5")
+                new DataRowColumnValue("name", SpecDataType.TEXT, "Sahil"),
+                new DataRowColumnValue("valid", SpecDataType.BOOLEAN, "1"),
+                new DataRowColumnValue("count", SpecDataType.INTEGER, "5")
         );
 
-        client.insertRecord("testTable", values);
+        client.insertRecord("testTable", new DataRow(values));
     }
 }

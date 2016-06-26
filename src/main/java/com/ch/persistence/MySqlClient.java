@@ -1,5 +1,6 @@
-package com.ch.db;
+package com.ch.persistence;
 
+import com.ch.parser.DataRow;
 import com.ch.parser.DataRowColumnValue;
 import com.ch.parser.SpecColumnDescriptor;
 
@@ -19,7 +20,7 @@ public class MySqlClient
     private final String databaseName;
     private final Connection connection;
 
-    public MySqlClient(final String databaseName)
+    private MySqlClient(final String databaseName)
             throws PersistenceException {
         this.databaseName = databaseName;
 
@@ -32,6 +33,10 @@ public class MySqlClient
         catch (final SQLException e) {
             throw new PersistenceException("Error trying to initialize client", e);
         }
+    }
+
+    public static MySqlClient newClient(final String databaseName) throws PersistenceException {
+        return new MySqlClient(databaseName);
     }
 
     @Override
@@ -71,12 +76,12 @@ public class MySqlClient
     }
 
     @Override
-    public void insertRecord(final String tableName, final List<DataRowColumnValue> dataRowColumnValues)
+    public void insertRecord(final String tableName, final DataRow dataRow)
             throws PersistenceException {
         final StringBuilder query = new StringBuilder();
         query.append("INSERT INTO ").append(tableName).append(" (");
 
-        final String columnNames = dataRowColumnValues.stream()
+        final String columnNames = dataRow.getDataRowColumnValues().stream()
                 .map(DataRowColumnValue::getColumnName)
                 .reduce((a,b) -> a + "," + b)
                 .get();
@@ -84,8 +89,8 @@ public class MySqlClient
 
         query.append("VALUES (");
 
-        final String values = dataRowColumnValues.stream()
-                .map(DataRowColumnValue::getValue)
+        final String values = dataRow.getDataRowColumnValues().stream()
+                .map(cell -> "'" + cell.getValue() + "'")
                 .reduce((a,b) -> a + "," + b)
                 .get();
         query.append(values).append(") ");

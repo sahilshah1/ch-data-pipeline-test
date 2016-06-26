@@ -15,15 +15,16 @@ public class DataParser {
     private final Path dataFilePath;
     private final DataRowParser dataRowParser;
 
-    DataParser(final Path dataFilePath, final DataRowParser dataRowParser) {
+    public DataParser(final Path dataFilePath, final List<SpecColumnDescriptor> specColumnDescriptors) {
         this.dataFilePath = dataFilePath;
-        this.dataRowParser = dataRowParser;
+        this.dataRowParser = new DataRowParser(specColumnDescriptors);
     }
 
-    List<DataRow> read() {
+    public List<DataRow> read() {
         final List<DataRow> rows = new LinkedList<>();
 
-        try (final BufferedReader br = new BufferedReader(new FileReader(this.dataFilePath.toAbsolutePath().toString()))) {
+        try (final BufferedReader br =
+                     new BufferedReader(new FileReader(this.dataFilePath.toAbsolutePath().toString()))) {
             String line;
             while ((line = br.readLine()) != null) {
                 rows.add(new DataRow(this.dataRowParser.parseRow(line)));

@@ -7,14 +7,14 @@ import java.util.List;
  * instances.
  * Created by sahil on 6/25/16.
  */
-class DataRow {
+public class DataRow {
     private final List<DataRowColumnValue> dataRowColumnValues;
 
-    DataRow(final List<DataRowColumnValue> dataRowColumnValues) {
+    public DataRow(final List<DataRowColumnValue> dataRowColumnValues) {
         this.dataRowColumnValues = dataRowColumnValues;
     }
 
-    List<DataRowColumnValue> getDataRowColumnValues() {
+    public List<DataRowColumnValue> getDataRowColumnValues() {
         return this.dataRowColumnValues;
     }
 }

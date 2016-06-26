@@ -10,9 +10,9 @@ import java.util.Objects;
 public class SpecColumnDescriptor {
     private final String columnName;
     private final int width;
-    private final DataType dataType;
+    private final SpecDataType dataType;
 
-    public SpecColumnDescriptor(final String columnName, final int width, final DataType dataType) {
+    public SpecColumnDescriptor(final String columnName, final int width, final SpecDataType dataType) {
         this.columnName = columnName;
         this.width = width;
         this.dataType = dataType;
@@ -26,7 +26,7 @@ public class SpecColumnDescriptor {
         return this.width;
     }
 
-    public DataType getDataType() {
+    public SpecDataType getDataType() {
         return this.dataType;
     }
 
@@ -51,7 +51,7 @@ public class SpecColumnDescriptor {
         final StringBuilder builder = new StringBuilder();
         builder.append("Column Name: ").append(this.columnName).append("\n");
         builder.append("Width ").append(String.valueOf(this.width)).append("\n");
-        builder.append("DataType: ").append(this.dataType).append("\n");
+        builder.append("SpecDataType: ").append(this.dataType).append("\n");
         return builder.toString();
     }
 }
