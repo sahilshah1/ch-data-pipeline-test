@@ -41,17 +41,19 @@ public class Pipeline {
         final List<SpecFile> specFiles = SpecFile.getSpecFiles(specFileDir);
         final Map<String, Set<DataFile>> dataFileMap = DataFile.getDataFiles(dataFileDir);
 
-        final ExecutorService threadPool = Executors.newCachedThreadPool();
+        final ExecutorService pipelineTaskThreadPool = Executors.newCachedThreadPool();
+        final ExecutorService writeThreadPool = Executors.newCachedThreadPool();
 
         final List<PipelineTask> tasks = new LinkedList<>();
         for (final SpecFile specFile : specFiles) {
             logger.info("Spawning task for " + specFile);
             tasks.add(new PipelineTask(specFile,
                     dataFileMap.get(specFile.getSpecName()),
-                    MySqlClient.newClient(targetDatabaseName)));
+                    MySqlClient.newClient(targetDatabaseName),
+                    writeThreadPool));
         }
-        threadPool.invokeAll(tasks); //blocks until all tasks finished
-        threadPool.shutdown();
+        pipelineTaskThreadPool.invokeAll(tasks); //blocks until all tasks finished
+        pipelineTaskThreadPool.shutdown();
     }
 
     private static void configureSlf4j() {

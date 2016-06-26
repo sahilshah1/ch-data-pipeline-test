@@ -36,11 +36,12 @@ public class PipelineTask
 
     public PipelineTask(final SpecFile specFile,
                         final Set<DataFile> dataFiles,
-                        final PersistenceClient client) {
+                        final PersistenceClient client,
+                        final ExecutorService threadPool) {
         this.specFile = specFile;
         this.dataFiles = dataFiles;
         this.client = client;
-        this.threadPool = Executors.newCachedThreadPool();
+        this.threadPool = threadPool;
     }
 
 
