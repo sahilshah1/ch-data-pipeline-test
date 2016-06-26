@@ -78,6 +78,7 @@ public class MySqlClient
     @Override
     public void insertRecord(final String tableName, final DataRow dataRow)
             throws PersistenceException {
+        //TODO: duplicate record error checking??
         final StringBuilder query = new StringBuilder();
         query.append("INSERT INTO ").append(tableName).append(" (");
 
