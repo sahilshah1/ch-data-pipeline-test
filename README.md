@@ -1,7 +1,7 @@
 # ch-data-pipeline-test
 Miniature example of a data pipeline according to [problem spec](file_parser.md).
 
-## Assumptions 
+## Assumptions
 Some assumptions were made to solve the problem. I should've asked questions,
 but this is what I get for putting this off till the weekend.
 I've tried to write the code to account for changes in these assumptions.
@@ -21,6 +21,7 @@ invalid: "colName",width,datatype
 ## Required dependencies
 * Java JDK: 1.8.0_45 or later
 * MySql: 5.6.25 or later
+* Gradle: 2.8 or later
 
 All other dependencies will be downloaded from Maven Central when building the project.
 
@@ -32,5 +33,6 @@ java -jar <path_to_clover_jar> <database name> <spec file path> <data file path>
 ```
 A command that should work with a clone of this repository:
 ```
-java -jar clover-1.0-SNAPSHOT.jar NewDatabase specs/ data/
+gradle jar
+java -jar build/libs/clover-1.0-SNAPSHOT.jar NewDatabase specs/ data/
 ```
