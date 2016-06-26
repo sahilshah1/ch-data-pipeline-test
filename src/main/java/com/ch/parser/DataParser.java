@@ -1,5 +1,8 @@
 package com.ch.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,6 +17,7 @@ import java.util.function.Consumer;
  * Created by sahil on 6/25/16.
  */
 public class DataParser {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataParser.class);
 
     private final Path dataFilePath;
     private final List<SpecColumnDescriptor> specColumnDescriptors;
@@ -25,6 +29,7 @@ public class DataParser {
     }
 
     public void read(final Consumer<DataRow> dataRowConsumer) {
+        LOGGER.info("Reading data file: " + this.dataFilePath.toAbsolutePath().toString());
         try (final BufferedReader br =
                      new BufferedReader(new FileReader(this.dataFilePath.toAbsolutePath().toString()))) {
             String line;
@@ -33,7 +38,7 @@ public class DataParser {
             }
         }
         catch (final IOException e) {
-            System.out.println(e.toString());
+            LOGGER.error("Error parsing data", e);
         }
     }
 

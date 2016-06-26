@@ -1,5 +1,8 @@
 package com.ch.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,6 +16,8 @@ import java.util.List;
  */
 public class SpecParser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpecParser.class);
+
     private final Path specFilePath;
 
     public SpecParser(final Path specFilePath) {
@@ -22,10 +27,12 @@ public class SpecParser {
     public List<SpecColumnDescriptor> read() {
         final List<SpecColumnDescriptor> descriptors = new ArrayList<>();
 
+        //assumes only 3 columns
         int columnNameIndex = -1;
         int columnWidthIndex = -1;
         int columnDataTypeIndex = -1;
 
+        LOGGER.info("Reading spec file: " + this.specFilePath.toAbsolutePath().toString());
         try (final BufferedReader br = new BufferedReader(new FileReader(this.specFilePath.toAbsolutePath().toString()))) {
             String firstLine = null;
             String line;
@@ -33,6 +40,7 @@ public class SpecParser {
                 //first line contains description of columns
                 if (firstLine == null) {
                     firstLine = line;
+                    LOGGER.info("Interpreting first line of spec: " + firstLine);
                     //TODO: make this not hardcoded
                     final String[] values = firstLine.split(",");
                     for(int i = 0; i < values.length; i++) {
@@ -46,6 +54,10 @@ public class SpecParser {
                             columnDataTypeIndex = i;
                         }
                     }
+                    LOGGER.info("Indexes of columns " +
+                            "Name=" + columnNameIndex +
+                            ", Width=" + columnWidthIndex +
+                            ", Type=" + columnDataTypeIndex);
                 }
                 //every other line contains the actual columns
                 else {
@@ -55,14 +67,13 @@ public class SpecParser {
                             Integer.valueOf(values[columnWidthIndex]),
                             SpecDataType.valueOf(values[columnDataTypeIndex])));
                 }
-
-
             }
         }
         catch (final IOException e) {
-            System.out.println(e.toString());
+            LOGGER.error("Error parsing spec", e);
         }
 
+        LOGGER.info("Column descriptors: " + descriptors);
         return descriptors;
     }
 }
