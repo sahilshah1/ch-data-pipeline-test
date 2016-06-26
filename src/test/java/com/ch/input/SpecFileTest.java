@@ -24,11 +24,10 @@ public class SpecFileTest {
         final Path pathToInvalidSpec = Paths.get(SpecFileTest.class.getResource("NOT_VALID.notcsv").getPath());
         final Path pathToSpecDir = pathToSpec.getParent();
 
-        final List<Path> specPaths = SpecFile.getSpecFiles(pathToSpecDir);
+        final List<SpecFile> specPaths = SpecFile.getSpecFiles(pathToSpecDir);
 
         assertEquals(1, specPaths.size());
-        assertTrue(specPaths.contains(pathToSpec));
-        assertFalse(specPaths.contains(pathToInvalidSpec));
+        assertEquals(new SpecFile(pathToSpec), specPaths.get(0));
     }
 
 }

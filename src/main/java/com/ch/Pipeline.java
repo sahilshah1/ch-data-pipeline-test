@@ -4,34 +4,36 @@ import com.ch.input.DataFile;
 import com.ch.input.SpecFile;
 import com.ch.persistence.MySqlClient;
 import com.ch.persistence.PersistenceClient;
+import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 /**
  * Created by sahil on 6/25/16.
  */
 public class Pipeline {
 
-    private static final String SPEC_FILE_DIR_ARG = "-specFileDir";
-    private static final String DATA_FILE_DIR_ARG = "-dataFileDir";
-
-    private static final String SPECS_DIR = "/Users/sahil/clover/specs/testformat1.csv";
-    private static final String DATA_DIR = "/Users/sahil/clover/data/testformat1_2015-06-28.txt";
-
-
     public static void main(final String[] args)
             throws PersistenceClient.PersistenceException, IOException, ExecutionException, InterruptedException {
+        configureSlf4j();
+        final Logger logger = LoggerFactory.getLogger(Pipeline.class);
 
         final Path specFileDir = Paths.get(args[0]);
+        logger.info("Spec File Dir: " + specFileDir);
+
         final Path dataFileDir = Paths.get(args[1]);
+        logger.info("Data File Dir: " + dataFileDir);
 
         final List<SpecFile> specFiles = SpecFile.getSpecFiles(specFileDir);
         final Map<String, Set<DataFile>> dataFileMap = DataFile.getDataFiles(dataFileDir);
@@ -40,12 +42,17 @@ public class Pipeline {
 
         final List<PipelineTask> tasks = new LinkedList<>();
         for (final SpecFile specFile : specFiles) {
+            logger.info("Spawning task for " + specFile);
             tasks.add(new PipelineTask(specFile,
                     dataFileMap.get(specFile.getSpecName()),
                     MySqlClient.newClient("test")));
         }
         threadPool.invokeAll(tasks); //blocks until all tasks finished
         threadPool.shutdown();
+    }
+
+    private static void configureSlf4j() {
+        PropertyConfigurator.configure(Pipeline.class.getResource("log4j.properties").getPath());
     }
 
 }

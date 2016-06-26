@@ -47,6 +47,11 @@ public class SpecFile {
         return this.path.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return this.path.toAbsolutePath().toString();
+    }
+
     public static List<SpecFile> getSpecFiles(final Path specFileDir)
             throws IOException {
         final List<SpecFile> paths = new LinkedList<>();

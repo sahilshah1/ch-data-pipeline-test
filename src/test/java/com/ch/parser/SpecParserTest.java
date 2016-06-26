@@ -24,4 +24,16 @@ public class SpecParserTest {
         assertEquals(new SpecColumnDescriptor("count", 3, SpecDataType.INTEGER), descriptorList.get(2));
     }
 
+    @Test
+    public void testFormat2() {
+        final SpecParser parser = new SpecParser(Paths.get(SpecParserTest.class.getResource("format2.txt").getPath()));
+
+        final List<SpecColumnDescriptor> descriptorList = parser.read();
+
+        assertEquals(3, descriptorList.size());
+        assertEquals(new SpecColumnDescriptor("isValid", 1, SpecDataType.BOOLEAN), descriptorList.get(0));
+        assertEquals(new SpecColumnDescriptor("colName", 5, SpecDataType.TEXT), descriptorList.get(1));
+        assertEquals(new SpecColumnDescriptor("counts", 3, SpecDataType.INTEGER), descriptorList.get(2));
+    }
+
 }

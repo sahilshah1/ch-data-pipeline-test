@@ -43,4 +43,28 @@ public class DataParserTest {
         assertEquals(new DataRowColumnValue("count", SpecDataType.INTEGER, "103"), columnValues2.get(2));
     }
 
+    @Test
+    public void testData2Format() {
+        final List<SpecColumnDescriptor> descriptors = Arrays.asList(
+                new SpecColumnDescriptor("isValid", 1, SpecDataType.BOOLEAN),
+                new SpecColumnDescriptor("colName", 5, SpecDataType.TEXT),
+                new SpecColumnDescriptor("counts", 3, SpecDataType.INTEGER)
+        );
+        final DataParser parser = new DataParser(Paths.get(DataParserTest.class.getResource("data2.txt").getPath()), descriptors);
+
+        final List<DataRow> rows = parser.read();
+
+        assertEquals(2, rows.size());
+        //check first row
+        final List<DataRowColumnValue> columnValues0 = rows.get(0).getDataRowColumnValues();
+        assertEquals(new DataRowColumnValue("isValid", SpecDataType.BOOLEAN, "1"), columnValues0.get(0));
+        assertEquals(new DataRowColumnValue("colName", SpecDataType.TEXT, "hello"), columnValues0.get(1));
+        assertEquals(new DataRowColumnValue("counts", SpecDataType.INTEGER, "033"), columnValues0.get(2));
+        //check second row
+        final List<DataRowColumnValue> columnValues1 = rows.get(1).getDataRowColumnValues();
+        assertEquals(new DataRowColumnValue("isValid", SpecDataType.BOOLEAN, "0"), columnValues1.get(0));
+        assertEquals(new DataRowColumnValue("colName", SpecDataType.TEXT, "no"), columnValues1.get(1));
+        assertEquals(new DataRowColumnValue("counts", SpecDataType.INTEGER, "1"), columnValues1.get(2));
+    }
+
 }

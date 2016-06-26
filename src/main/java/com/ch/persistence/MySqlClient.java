@@ -3,6 +3,8 @@ package com.ch.persistence;
 import com.ch.parser.DataRow;
 import com.ch.parser.DataRowColumnValue;
 import com.ch.parser.SpecColumnDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,6 +18,7 @@ import java.util.List;
  */
 public class MySqlClient
         implements PersistenceClient {
+    final Logger LOG = LoggerFactory.getLogger(MySqlClient.class);
 
     private final String databaseName;
     private final Connection connection;
@@ -26,6 +29,7 @@ public class MySqlClient
 
         try {
             this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root&password=&serverTimezone=UTC");
+            LOG.info("Creating MySql client for database " + databaseName);
             final Statement s = this.connection.createStatement();
             s.executeUpdate("CREATE DATABASE IF NOT EXISTS " + this.databaseName + ";");
             s.execute("USE " + this.databaseName);
@@ -66,6 +70,9 @@ public class MySqlClient
         query.append(")");
 
         try {
+            LOG.info("Creating table " + tableName + " in database " + this.databaseName);
+            LOG.info("Query: " + query);
+
             final Statement statement = this.connection.createStatement();
             statement.executeUpdate(query.toString());
         }
@@ -97,6 +104,9 @@ public class MySqlClient
         query.append(values).append(") ");
 
         try {
+            LOG.info("Inserting records into " + tableName + " in database " + this.databaseName);
+            LOG.info("Query: " + query);
+
             final Statement statement = this.connection.createStatement();
             statement.executeUpdate(query.toString());
         }

@@ -23,4 +23,7 @@ gradlew
 gradlew.bat
 build/
 
+# logging
+pipeline.log
+
 **/.DS_Store
