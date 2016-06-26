@@ -27,7 +27,7 @@ public class PipelineTask
     implements Callable<Void> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PipelineTask.class);
-    private static final int BATCH_SIZE = 20; //accumulates this many rows before spawning a write task
+    private static final int BATCH_SIZE = 1000; //accumulates this many rows before spawning a write task
 
     private final SpecFile specFile;
     private final Set<DataFile> dataFiles;

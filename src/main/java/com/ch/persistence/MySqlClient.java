@@ -31,15 +31,22 @@ public class MySqlClient
         this.databaseName = databaseName;
 
         try {
+            //TODO: implement connection pool, currently this connection will live foreve
             this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/?user=root&password=&serverTimezone=UTC");
+
             LOG.info("Creating MySql client for database " + databaseName);
-            final Statement s = this.connection.createStatement();
+            final Statement s = getConnection().createStatement();
             s.executeUpdate("CREATE DATABASE IF NOT EXISTS " + this.databaseName + ";");
             s.execute("USE " + this.databaseName);
         }
         catch (final SQLException e) {
             throw new PersistenceException("Error trying to initialize client", e);
         }
+    }
+
+    private Connection getConnection()
+            throws SQLException {
+        return this.connection;
     }
 
     public static MySqlClient newClient(final String databaseName) throws PersistenceException {
@@ -72,12 +79,9 @@ public class MySqlClient
         query.deleteCharAt(query.length() - 1); //remove last comma
         query.append(")");
 
+        LOG.info("Creating table " + tableName + " in database " + this.databaseName);
         try {
-            LOG.info("Creating table " + tableName + " in database " + this.databaseName);
-            LOG.debug("Query: " + query);
-
-            final Statement statement = this.connection.createStatement();
-            statement.executeUpdate(query.toString());
+            executeQuery(query.toString());
         }
         catch (final SQLException e) {
             throw new PersistenceException("Error trying to set up table", e);
@@ -111,19 +115,35 @@ public class MySqlClient
         }
         query.deleteCharAt(query.length() - 1); //remove last comma
 
+        LOG.debug("Inserting records into " + tableName + " in database " + this.databaseName);
         try {
-            LOG.debug("Inserting records into " + tableName + " in database " + this.databaseName);
-            final String queryId = UUID.randomUUID().toString();
-            LOG.debug("Query (queryId=" + queryId + "): " + query);
-
-            final Instant start = Instant.now();
-            final Statement statement = this.connection.createStatement();
-            statement.executeUpdate(query.toString());
-            LOG.debug("Query " + queryId + " executed in " + Duration.between(start, Instant.now()).toMillis() + "ms");
-
+            executeQuery(query.toString());
         }
         catch (final SQLException e) {
             throw new PersistenceException("Error trying to enter record", e);
         }
+    }
+
+    private void executeQuery(final String query)
+            throws SQLException {
+        //TODO: implemente connection close here after creating pool
+        //select the database
+        chooseDatabase(getConnection());
+
+        //assign a UUID to the query for debugging and to match with timing
+        final String queryId = UUID.randomUUID().toString();
+        LOG.debug("Query (queryId=" + queryId + "): " + query);
+        final Instant start = Instant.now();
+
+        final Statement statement = getConnection().createStatement();
+        statement.executeUpdate(query);
+
+        LOG.debug("Query " + queryId + " executed in " + Duration.between(start, Instant.now()).toMillis() + "ms");
+    }
+
+    private void chooseDatabase(final Connection connection)
+            throws SQLException {
+        final Statement s = connection.createStatement();
+        s.execute("USE " + this.databaseName);
     }
 }
