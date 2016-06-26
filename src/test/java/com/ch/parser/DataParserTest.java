@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -23,7 +24,7 @@ public class DataParserTest {
         );
         final DataParser parser = new DataParser(Paths.get(DataParserTest.class.getResource("data1.txt").getPath()), descriptors);
 
-        final List<DataRow> rows = parser.read();
+        final List<DataRow> rows = readAllRows(parser);
 
         assertEquals(3, rows.size());
         //check first row
@@ -52,7 +53,7 @@ public class DataParserTest {
         );
         final DataParser parser = new DataParser(Paths.get(DataParserTest.class.getResource("data2.txt").getPath()), descriptors);
 
-        final List<DataRow> rows = parser.read();
+        final List<DataRow> rows = readAllRows(parser);
 
         assertEquals(2, rows.size());
         //check first row
@@ -65,6 +66,12 @@ public class DataParserTest {
         assertEquals(new DataRowColumnValue("isValid", SpecDataType.BOOLEAN, "0"), columnValues1.get(0));
         assertEquals(new DataRowColumnValue("colName", SpecDataType.TEXT, "no"), columnValues1.get(1));
         assertEquals(new DataRowColumnValue("counts", SpecDataType.INTEGER, "1"), columnValues1.get(2));
+    }
+
+    private List<DataRow> readAllRows(final DataParser parser) {
+        final List<DataRow> rows = new LinkedList<>();
+        parser.read(rows::add);
+        return rows;
     }
 
 }

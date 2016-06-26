@@ -37,6 +37,15 @@ public class DataRowColumnValue {
         return Objects.hash(this.columnName, this.dataType, this.value);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Column Name: ").append(this.columnName).append(", ");
+        builder.append("DataType: ").append(this.dataType).append(", ");
+        builder.append("Value ").append(String.valueOf(this.value)).append("\n");
+        return builder.toString();
+    }
+
     public String getColumnName() {
         return this.columnName;
     }

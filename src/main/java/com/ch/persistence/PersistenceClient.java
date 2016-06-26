@@ -14,8 +14,9 @@ public interface PersistenceClient {
     void createTable(String tableName, List<SpecColumnDescriptor> columnDescriptors)
             throws PersistenceException;
 
-    void insertRecord(String tableName, DataRow dataRow)
+    void insertRecords(String tableName, List<DataRow> dataRow)
             throws PersistenceException;
+
 
     class PersistenceException
             extends Exception {

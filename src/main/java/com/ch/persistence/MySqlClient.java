@@ -10,7 +10,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Maintains a connection to a specific MySql database.
@@ -83,32 +86,41 @@ public class MySqlClient
     }
 
     @Override
-    public void insertRecord(final String tableName, final DataRow dataRow)
+    public void insertRecords(final String tableName, final List<DataRow> dataRows)
             throws PersistenceException {
         //TODO: duplicate record error checking??
         final StringBuilder query = new StringBuilder();
-        query.append("INSERT INTO ").append(tableName).append(" (");
 
-        final String columnNames = dataRow.getDataRowColumnValues().stream()
+        //build part of query listing all the columns
+        query.append("INSERT INTO ").append(tableName).append(" (");
+        final String columnNames = dataRows.get(0).getDataRowColumnValues().stream()
                 .map(DataRowColumnValue::getColumnName)
                 .reduce((a,b) -> a + "," + b)
                 .get();
         query.append(columnNames).append(") ");
 
-        query.append("VALUES (");
+        query.append("VALUES ");
+        for (final DataRow row : dataRows) {
+            query.append("(");
 
-        final String values = dataRow.getDataRowColumnValues().stream()
-                .map(cell -> "'" + cell.getValue() + "'")
-                .reduce((a,b) -> a + "," + b)
-                .get();
-        query.append(values).append(") ");
+            final String values = row.getDataRowColumnValues().stream()
+                    .map(cell -> "'" + cell.getValue() + "'")
+                    .reduce((a, b) -> a + "," + b)
+                    .get();
+            query.append(values).append("),");
+        }
+        query.deleteCharAt(query.length() - 1); //remove last comma
 
         try {
             LOG.info("Inserting records into " + tableName + " in database " + this.databaseName);
-            LOG.info("Query: " + query);
+            final String queryId = UUID.randomUUID().toString();
+            LOG.info("Query (queryId=" + queryId + "): " + query);
 
+            final Instant start = Instant.now();
             final Statement statement = this.connection.createStatement();
             statement.executeUpdate(query.toString());
+            LOG.info("Query " + queryId + " executed in " + Duration.between(start, Instant.now()).toMillis() + "ms");
+
         }
         catch (final SQLException e) {
             throw new PersistenceException("Error trying to enter record", e);

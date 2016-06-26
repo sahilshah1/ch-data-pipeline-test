@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Parses a data file according to some spec.
@@ -16,26 +17,23 @@ public class DataParser {
     private final Path dataFilePath;
     private final List<SpecColumnDescriptor> specColumnDescriptors;
 
-    public DataParser(final Path dataFilePath, final List<SpecColumnDescriptor> specColumnDescriptors) {
+    public DataParser(final Path dataFilePath,
+                      final List<SpecColumnDescriptor> specColumnDescriptors) {
         this.dataFilePath = dataFilePath;
         this.specColumnDescriptors = specColumnDescriptors;
     }
 
-    public List<DataRow> read() {
-        final List<DataRow> rows = new LinkedList<>();
-
+    public void read(final Consumer<DataRow> dataRowConsumer) {
         try (final BufferedReader br =
                      new BufferedReader(new FileReader(this.dataFilePath.toAbsolutePath().toString()))) {
             String line;
             while ((line = br.readLine()) != null) {
-                rows.add(new DataRow(parseRow(line)));
+                dataRowConsumer.accept(new DataRow(parseRow(line)));
             }
         }
         catch (final IOException e) {
             System.out.println(e.toString());
         }
-
-        return rows;
     }
 
     private List<DataRowColumnValue> parseRow(final String rowString) {

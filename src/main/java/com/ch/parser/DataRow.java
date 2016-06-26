@@ -17,4 +17,9 @@ public class DataRow {
     public List<DataRowColumnValue> getDataRowColumnValues() {
         return this.dataRowColumnValues;
     }
+
+    @Override
+    public String toString() {
+        return this.dataRowColumnValues.toString();
+    }
 }
