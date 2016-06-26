@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,6 +46,6 @@ public class MySqlClientTest {
                 new DataRowColumnValue("count", SpecDataType.INTEGER, "5")
         );
 
-        client.insertRecord("testTable", new DataRow(values));
+        client.insertRecords("testTable", Collections.singletonList(new DataRow(values)));
     }
 }
