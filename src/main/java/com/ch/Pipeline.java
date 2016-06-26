@@ -29,10 +29,13 @@ public class Pipeline {
         configureSlf4j();
         final Logger logger = LoggerFactory.getLogger(Pipeline.class);
 
-        final Path specFileDir = Paths.get(args[0]);
+        final String targetDatabaseName = args[0];
+        logger.info("Target database (will be created if nonexistent: " + targetDatabaseName);
+
+        final Path specFileDir = Paths.get(args[1]);
         logger.info("Spec File Dir: " + specFileDir);
 
-        final Path dataFileDir = Paths.get(args[1]);
+        final Path dataFileDir = Paths.get(args[2]);
         logger.info("Data File Dir: " + dataFileDir);
 
         final List<SpecFile> specFiles = SpecFile.getSpecFiles(specFileDir);
@@ -45,7 +48,7 @@ public class Pipeline {
             logger.info("Spawning task for " + specFile);
             tasks.add(new PipelineTask(specFile,
                     dataFileMap.get(specFile.getSpecName()),
-                    MySqlClient.newClient("test")));
+                    MySqlClient.newClient(targetDatabaseName)));
         }
         threadPool.invokeAll(tasks); //blocks until all tasks finished
         threadPool.shutdown();
