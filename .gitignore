@@ -5,6 +5,7 @@
 
 # Package Files #
 *.jar
+!clover-*.jar
 *.war
 *.ear
 
