@@ -132,6 +132,18 @@ public class SpecParser {
         public int hashCode() {
             return Objects.hash(this.columnName, this.dataType, this.value);
         }
+
+        public String getColumnName() {
+            return this.columnName;
+        }
+
+        public DataType getDataType() {
+            return this.dataType;
+        }
+
+        public String getValue() {
+            return this.value;
+        }
     }
 
     public static class SpecColumnDescriptor {
@@ -139,7 +151,7 @@ public class SpecParser {
         private final int width;
         private final DataType dataType;
 
-        SpecColumnDescriptor(final String columnName, final int width, final DataType dataType) {
+        public SpecColumnDescriptor(final String columnName, final int width, final DataType dataType) {
             this.columnName = columnName;
             this.width = width;
             this.dataType = dataType;
