@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -25,8 +26,8 @@ import java.util.concurrent.ExecutorService;
 public class PipelineTask
     implements Callable<Void> {
 
-    private static final int BATCH_SIZE = 20; //accumulates this many rows before spawning a write task
     private static final Logger LOGGER = LoggerFactory.getLogger(PipelineTask.class);
+    private static final int BATCH_SIZE = 20; //accumulates this many rows before spawning a write task
 
     private final SpecFile specFile;
     private final Set<DataFile> dataFiles;
@@ -61,15 +62,17 @@ public class PipelineTask
             final List<DataRow> batch = new LinkedList<>();
             dataParser.read(dataRow -> {
                 batch.add(dataRow);
+
                 if (batch.size() >= BATCH_SIZE) {
-                    this.threadPool.submit(new PersistenceWriter(batch));
+                    final List<DataRow> submissionBatch = Collections.unmodifiableList(new ArrayList<>(batch));
+                    this.threadPool.submit(newPersistenceWriter(submissionBatch));
                     batch.clear();
                 }
             });
 
-            //write any leftover rows  
+            //write any leftover rows
             if (batch.size() > 0) {
-                this.threadPool.submit(new PersistenceWriter(batch));
+                this.threadPool.submit(newPersistenceWriter(batch));
             }
         }
 
@@ -77,26 +80,14 @@ public class PipelineTask
         return null;
     }
 
-    /**
-     * Task that writes to the database.
-     */
-    private class PersistenceWriter
-            implements Runnable {
-
-        private final List<DataRow> batch;
-
-        private PersistenceWriter(final List<DataRow> batch) {
-            this.batch = new ArrayList<>(batch);
-        }
-
-        @Override
-        public void run() {
+    private Runnable newPersistenceWriter(final List<DataRow> batch) {
+        return () -> {
             try {
-                PipelineTask.this.client.insertRecords(PipelineTask.this.specFile.getSpecName(), this.batch);
+                PipelineTask.this.client.insertRecords(PipelineTask.this.specFile.getSpecName(), batch);
             }
             catch (final PersistenceClient.PersistenceException e) {
-                LOGGER.error("Error trying to submit batch " + this.batch, e);
+                LOGGER.error("Error trying to submit batch " + batch, e);
             }
-        }
+        };
     }
 }
