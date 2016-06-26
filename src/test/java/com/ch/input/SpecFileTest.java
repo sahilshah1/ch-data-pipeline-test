@@ -1,6 +1,5 @@
 package com.ch.input;
 
-import com.ch.Pipeline;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -9,8 +8,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sahil on 6/25/16.

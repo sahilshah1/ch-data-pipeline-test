@@ -1,7 +1,6 @@
 package com.ch.persistence;
 
 import com.ch.parser.DataRow;
-import com.ch.parser.DataRowColumnValue;
 import com.ch.parser.SpecColumnDescriptor;
 
 import java.util.List;

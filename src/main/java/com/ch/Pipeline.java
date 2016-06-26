@@ -9,17 +9,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * Main class that runs the pipeline.
  * Created by sahil on 6/25/16.
  */
 public class Pipeline {
@@ -28,6 +31,12 @@ public class Pipeline {
             throws PersistenceClient.PersistenceException, IOException, ExecutionException, InterruptedException {
         configureSlf4j();
         final Logger logger = LoggerFactory.getLogger(Pipeline.class);
+
+        if (args.length < 3) {
+            logger.info("Usage: ");
+            logger.info("java -jar <name of jar> <db_name> <spec_file_absolute_path> <data_file_absolute_path>");
+            System.exit(0);
+        }
 
         //log parameters
         final String targetDatabaseName = args[0];
@@ -57,8 +66,13 @@ public class Pipeline {
         pipelineTaskThreadPool.shutdown();
     }
 
-    private static void configureSlf4j() {
-        PropertyConfigurator.configure(Pipeline.class.getResource("log4j.properties").getPath());
+    private static void configureSlf4j()
+            throws IOException {
+        final Properties properties = new Properties();
+        try (final InputStream inputStream =Pipeline.class.getResourceAsStream("log4j.properties")) {
+            properties.load(inputStream); //stream will remain open afterwards, so must be closed manually
+        }
+        PropertyConfigurator.configure(properties);
     }
 
 }

@@ -74,7 +74,7 @@ public class MySqlClient
 
         try {
             LOG.info("Creating table " + tableName + " in database " + this.databaseName);
-            LOG.info("Query: " + query);
+            LOG.debug("Query: " + query);
 
             final Statement statement = this.connection.createStatement();
             statement.executeUpdate(query.toString());
@@ -112,14 +112,14 @@ public class MySqlClient
         query.deleteCharAt(query.length() - 1); //remove last comma
 
         try {
-            LOG.info("Inserting records into " + tableName + " in database " + this.databaseName);
+            LOG.debug("Inserting records into " + tableName + " in database " + this.databaseName);
             final String queryId = UUID.randomUUID().toString();
-            LOG.info("Query (queryId=" + queryId + "): " + query);
+            LOG.debug("Query (queryId=" + queryId + "): " + query);
 
             final Instant start = Instant.now();
             final Statement statement = this.connection.createStatement();
             statement.executeUpdate(query.toString());
-            LOG.info("Query " + queryId + " executed in " + Duration.between(start, Instant.now()).toMillis() + "ms");
+            LOG.debug("Query " + queryId + " executed in " + Duration.between(start, Instant.now()).toMillis() + "ms");
 
         }
         catch (final SQLException e) {
