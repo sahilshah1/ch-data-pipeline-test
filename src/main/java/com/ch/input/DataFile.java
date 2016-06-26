@@ -32,7 +32,7 @@ public class DataFile {
         return this.path;
     }
 
-    public static boolean isValidDataFile(final Path path) {
+    private static boolean isValidDataFile(final Path path) {
         //matches fileformat1_2007-10-01.txt
         return path.getFileName().toString().matches(".*_\\d\\d\\d\\d-\\d\\d-\\d\\d\\.txt$");
     }
@@ -47,6 +47,13 @@ public class DataFile {
         return this.path.hashCode();
     }
 
+    /**
+     * Visits a directory to search for data files in the format
+     * specname_YYYY-MM-DD.txt
+     * @param dataDirPath path to begin searching from
+     * @return Map of specname to the Set of data files with names that correspond to the specname
+     * @throws IOException
+     */
     public static Map<String, Set<DataFile>> getDataFiles(final Path dataDirPath)
             throws IOException {
         final Map<String, Set<DataFile>> paths = new HashMap<>();

@@ -33,7 +33,7 @@ public class SpecFile {
         return StringUtils.substringBefore(this.path.getFileName().toString(), ".csv");
     }
 
-    public static boolean isValidSpecFile(final Path path) {
+    private static boolean isValidSpecFile(final Path path) {
         return path.getFileName().toString().matches(".*\\.csv");
     }
 
@@ -52,6 +52,13 @@ public class SpecFile {
         return this.path.toAbsolutePath().toString();
     }
 
+    /**
+     * Visits a directory to search for spec files in the format
+     * specname.csv
+     * @param specFileDir path to begin searching from
+     * @return list of all the spec files found
+     * @throws IOException
+     */
     public static List<SpecFile> getSpecFiles(final Path specFileDir)
             throws IOException {
         final List<SpecFile> paths = new LinkedList<>();

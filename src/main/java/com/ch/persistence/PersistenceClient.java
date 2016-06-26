@@ -11,9 +11,21 @@ import java.util.List;
  */
 public interface PersistenceClient {
 
+    /**
+     * Creates a table with the specified columns.
+     * @param tableName
+     * @param columnDescriptors
+     * @throws PersistenceException
+     */
     void createTable(String tableName, List<SpecColumnDescriptor> columnDescriptors)
             throws PersistenceException;
 
+    /**
+     * Inserts records into a table.
+     * @param tableName
+     * @param dataRow
+     * @throws PersistenceException
+     */
     void insertRecords(String tableName, List<DataRow> dataRow)
             throws PersistenceException;
 

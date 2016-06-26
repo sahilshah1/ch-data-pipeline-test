@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 public class PipelineTask
     implements Callable<Void> {
 
-    private static final int BATCH_SIZE = 20; //when to spawn a write task
+    private static final int BATCH_SIZE = 20; //accumulates this many rows before spawning a write task
     private static final Logger LOGGER = LoggerFactory.getLogger(PipelineTask.class);
 
     private final SpecFile specFile;
@@ -80,6 +80,7 @@ public class PipelineTask
             implements Runnable {
 
         private final List<DataRow> batch;
+
         private PersistenceWriter(final List<DataRow> batch) {
             this.batch = new ArrayList<>(batch);
         }

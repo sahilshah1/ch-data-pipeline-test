@@ -46,7 +46,7 @@ public class SpecParser {
                         }
                     }
                 }
-                //every other line contains
+                //every other line contains the actual columns
                 else {
                     final String[] values = line.split(",");
                     descriptors.add(new SpecColumnDescriptor(

@@ -29,21 +29,22 @@ public class Pipeline {
         configureSlf4j();
         final Logger logger = LoggerFactory.getLogger(Pipeline.class);
 
+        //log parameters
         final String targetDatabaseName = args[0];
-        logger.info("Target database (will be created if nonexistent: " + targetDatabaseName);
-
+        logger.info("Target database (will be created if nonexistent): " + targetDatabaseName);
         final Path specFileDir = Paths.get(args[1]);
         logger.info("Spec File Dir: " + specFileDir);
-
         final Path dataFileDir = Paths.get(args[2]);
         logger.info("Data File Dir: " + dataFileDir);
 
+        //collect specs and data to execute
         final List<SpecFile> specFiles = SpecFile.getSpecFiles(specFileDir);
         final Map<String, Set<DataFile>> dataFileMap = DataFile.getDataFiles(dataFileDir);
 
         final ExecutorService pipelineTaskThreadPool = Executors.newCachedThreadPool();
         final ExecutorService writeThreadPool = Executors.newCachedThreadPool();
 
+        //spawn workers
         final List<PipelineTask> tasks = new LinkedList<>();
         for (final SpecFile specFile : specFiles) {
             logger.info("Spawning task for " + specFile);
