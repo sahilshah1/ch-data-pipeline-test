@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class Pipeline {
 
-    private static final String SPECS_DIR = "";
-    private static final String DATA_DIR ="" ;
+    private static final String SPECS_DIR = "/Users/sahil/clover/specs/testformat1.csv";
+    private static final String DATA_DIR = "/Users/sahil/clover/data/testformat1_2015-06-28.txt";
 
 
     public static void main(final String[] args)
